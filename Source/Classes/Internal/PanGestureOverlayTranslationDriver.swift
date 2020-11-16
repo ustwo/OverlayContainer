@@ -41,6 +41,16 @@ class PanGestureOverlayTranslationDriver: NSObject,
         return translationController?.isDraggable(at: gesture.startingLocation, in: view) ?? false
     }
 
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+        if panGestureRecognizer.drivingScrollView == nil,
+           gestureRecognizer is OverlayTranslationGestureRecognizer,
+           otherGestureRecognizer is UIPanGestureRecognizer,
+           let scrollView = otherGestureRecognizer.view as? UIScrollView  {
+            return scrollView.contentOffset.y <= 0
+        }
+        return false
+    }
+
     // MARK: - Action
 
     @objc private func overlayPanGestureAction(_ sender: OverlayTranslationGestureRecognizer) {
